@@ -20,34 +20,10 @@ struct RepoDetailsView: View {
                 .fontWeight(.heavy)
             ScrollView {
                 VStack(alignment: .leading) {
-                    Text("Top 3 Contributers")
-                        .fontWeight(.heavy)
-                    ScrollView(.horizontal,showsIndicators: false) {
-                        HStack {
-                            ForEach(viewModel.popularContributors, id: \.id) { contributor in
-                                VStack(alignment: .leading) {
-                                    if let avatar = contributor.avatarUrl, let avatarURL = URL(string: avatar) {
-                                        AsyncImage(url: avatarURL) { image in
-                                            image.resizable()
-                                                .frame(width: 130, height: 160)
-                                                .aspectRatio(contentMode: .fit)
-                                                .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        } placeholder: {
-                                            ProgressView()
-                                        }
-                                    } else {
-                                        Image(systemName: "")
-                                    }
-                                    Text(contributor.login ?? "")
-                                    Text("\(contributor.contributions ?? 0)")
-                                }
-                            }
-                        }
-                    }
-                    
+                    contributors
                     Text("Top 3 Comments")
                         .fontWeight(.heavy)
-
+                    
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             ForEach(viewModel.popularComments, id: \.body) { comment in
@@ -75,7 +51,7 @@ struct RepoDetailsView: View {
                     
                     Text("Top 3 Issues")
                         .fontWeight(.heavy)
-
+                    
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
                             ForEach(viewModel.popularIssues, id: \.updatedAt) { issue in
@@ -96,7 +72,7 @@ struct RepoDetailsView: View {
                                     Text(issue.title ?? "")
                                         .lineLimit(1)
                                 }
-                                .frame(maxWidth: 200)
+                                .frame(maxWidth: 130)
                             }
                         }
                     }
@@ -113,6 +89,36 @@ struct RepoDetailsView: View {
                 viewModel.getPopularComments(loginName: repo.owner?.login ?? "", name: repo.name ?? "")
                 viewModel.getPopularIssues(loginName: repo.owner?.login ?? "", name: repo.name ?? "")
             }
+        }
+    }
+    
+    var contributors: some View {
+        VStack(alignment: .leading){
+            Text("Top 3 Contributers")
+                .fontWeight(.heavy)
+            ScrollView(.horizontal,showsIndicators: false) {
+                HStack {
+                    ForEach(viewModel.popularContributors, id: \.id) { contributor in
+                        VStack(alignment: .leading) {
+                            if let avatar = contributor.avatarUrl, let avatarURL = URL(string: avatar) {
+                                AsyncImage(url: avatarURL) { image in
+                                    image.resizable()
+                                        .frame(width: 130, height: 160)
+                                        .aspectRatio(contentMode: .fit)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                } placeholder: {
+                                    ProgressView()
+                                }
+                            } else {
+                                Image(systemName: "")
+                            }
+                            Text(contributor.login ?? "")
+                            Text("\(contributor.contributions ?? 0)")
+                        }
+                    }
+                }
+            }
+            
         }
     }
 }
